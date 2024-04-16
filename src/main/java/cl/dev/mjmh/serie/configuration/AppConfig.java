@@ -24,6 +24,8 @@ public class AppConfig {
     private String idAttr;
     @Value("${webpage.attribute.url}")
     private String urlAttr;
+    @Value("${webpage.debug.onFailingStatusCode}")
+    private boolean debugOnFailingStatusCode;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -35,6 +37,7 @@ public class AppConfig {
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
         webClient.getOptions().setJavaScriptEnabled(false);
         webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(debugOnFailingStatusCode);
         return webClient;
     }
 

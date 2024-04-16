@@ -1,0 +1,1 @@
+java -Xms256m -Xmx512m -Dspring.profiles.active=qa -jar serie-1.0.1.jar

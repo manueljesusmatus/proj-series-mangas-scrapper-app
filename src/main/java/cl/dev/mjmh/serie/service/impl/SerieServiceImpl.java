@@ -71,7 +71,7 @@ public class SerieServiceImpl implements SerieService {
             SerieEntity serieSaved = serieRepository.save(serie);
             return convertToDto(serieSaved);
         } catch (Exception ex) {
-            LOGGER.error("error creando serie", ex);
+            LOGGER.error("error creando serie [{}]", serie.getId(), ex);
             return null;
         }
 

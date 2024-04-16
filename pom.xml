@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>cl.dev.mjmh</groupId>
 	<artifactId>serie</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>SerieApp</name>
 	<description>App para descargar actualizaciones de serie</description>
 	<properties>
