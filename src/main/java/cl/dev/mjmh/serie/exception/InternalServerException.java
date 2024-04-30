@@ -19,7 +19,7 @@ public class InternalServerException extends RuntimeException{
     }
 
     public InternalServerException(String message, String ...params) {
-        super(String.format(message, params));
+        super(String.format(message, (Object) params));
     }
 
 
