@@ -30,7 +30,7 @@ public class DownloadServiceImpl implements DownloadService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int MAX_NOMBRE_LENGTH = 300;
+    private static final int MAX_NOMBRE_LENGTH = 150;
 
     private final ConfigurationSearch config;
     private final WebScrapingService webScrapingService;
