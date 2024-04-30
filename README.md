@@ -13,7 +13,7 @@ Este proyecto es una API REST desarrollada en Spring Boot que permite descargar 
    ```
 2. Ejecuta la aplicación Spring Boot:
    ```bash
-   java -jar target/serie-1.0.2.jar
+   java -jar target/serie-1.0.3.jar
    ```
 
 ## Uso
@@ -27,6 +27,8 @@ Este proyecto es una API REST desarrollada en Spring Boot que permite descargar 
 4. Sube tus cambios (`git push origin feature/nueva-caracteristica`).
 5. Abre un Pull Request.
 
+## Configuración de Log4j2
+La configuración de Log4j2 se puede personalizar a través de una propiedad log.level en el archivo application.properties. Esta propiedad permite cambiar el nivel de registro para controlar qué eventos se registran y cuáles se omiten. Los niveles de registro disponibles son: TRACE, DEBUG, INFO, WARN, ERROR y FATAL.
 
 ## Visual VM
 Puedes observar información como uso de CPU, memoria, hilos y clases cargadas en la JVM mediante VisualVM. Para ello ejecuta la aplicación con los siguientes argumentos:
