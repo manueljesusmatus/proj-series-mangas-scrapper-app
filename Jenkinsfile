@@ -32,8 +32,13 @@ pipeline {
                                 sshTransfer(
                                     sourceFiles: 'target/*.jar',
                                     removePrefix: 'target',
-                                    remoteDirectory: 'artifacts',
-                                    execCommand: 'date >> artifacts/listado.txt'
+                                    remoteDirectory: 'artifacts/series'
+                                ),
+                                sshTransfer(
+                                    sourceFiles: 'docker/*',
+                                    removePrefix: 'docker',
+                                    remoteDirectory: 'artifacts/series',
+                                    execCommand: 'date >> artifacts/series/historial.txt'
                                 )
                             ],
                             usePromotionTimestamp: false,
