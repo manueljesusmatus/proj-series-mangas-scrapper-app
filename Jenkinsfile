@@ -58,7 +58,7 @@ pipeline {
     post {
         always {
             script {
-                echo '$GIT_COMMIT'
+                sh 'printenv'
             }
         }
     }
