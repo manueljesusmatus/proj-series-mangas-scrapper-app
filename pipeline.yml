@@ -13,25 +13,34 @@ pipeline:
 
     - stage: Deploy
       steps:
-        - sshPublisher:
-            publishers:
-              - sshPublisherDesc:
-                  configName: "Raspberry"
-                  transfers:
-                    - sshTransfer:
-                        sourceFiles: "target/*.jar"
-                        removePrefix: "target"
-                        remoteDirectory: "artifacts/series-yml"
-                    - sshTransfer:
-                        sourceFiles: "docker/*"
-                        removePrefix: "docker"
-                        remoteDirectory: "artifacts/series-yml"
-                        execCommand: |
-                          cd artifacts/series-yml/ &&
-                          date >> historial.txt &&
-                          docker build -t series-app-yml:${env.GIT_COMMIT.substring(0,7)} -t series-app-yml:latest .
-                  usePromotionTimestamp: false
+        - script: |
+            SHORT_COMMIT="${env.GIT_COMMIT:0:7}"
+            sshPublisher(
+              publishers: [
+                sshPublisherDesc(
+                  configName: "Raspberry",
+                  transfers: [
+                    sshTransfer(
+                      sourceFiles: "target/*.jar",
+                      removePrefix: "target",
+                      remoteDirectory: "artifacts/series"
+                    ),
+                    sshTransfer(
+                      sourceFiles: "docker/*",
+                      removePrefix: "docker",
+                      remoteDirectory: "artifacts/series",
+                      execCommand: """
+                        cd artifacts/series/ &&
+                        date >> historial.txt &&
+                        docker build -t series-app:$SHORT_COMMIT -t series-app:latest .
+                      """
+                    )
+                  ],
+                  usePromotionTimestamp: false,
                   verbose: true
+                )
+              ]
+            )
   post:
     always:
       - script: "printenv | grep GIT"
