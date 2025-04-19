@@ -39,10 +39,9 @@ pipeline {
                                     removePrefix: 'docker',
                                     remoteDirectory: 'artifacts/series',
                                     execCommand: """
-                                        cd artifacts/series/ && \\
-                                        date >> historial.txt && \\
-                                        COMMIT_HASH=\$(git rev-parse --short HEAD) && \\
-                                        docker build -t series-app:\$COMMIT_HASH -t series-app:latest .
+                                        cd artifacts/series/ &&
+                                        date >> historial.txt &&
+                                        docker build -t series-app:${env.GIT_COMMIT.substring(0,7)} -t series-app:latest .
                                     """
                                 )
                             ],
@@ -58,7 +57,7 @@ pipeline {
     post {
         always {
             script {
-                sh 'printenv'
+                sh 'printenv | grep GIT'
             }
         }
     }
