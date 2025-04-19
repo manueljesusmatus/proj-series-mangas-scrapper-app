@@ -38,7 +38,7 @@ pipeline {
                                     sourceFiles: 'docker/*',
                                     removePrefix: 'docker',
                                     remoteDirectory: 'artifacts/series',
-                                    execCommand: 'date >> artifacts/series/historial.txt'
+                                    execCommand: 'cd artifacts/series/ && date >> historial.txt && docker build -t series-app .'
                                 )
                             ],
                             usePromotionTimestamp: false,
