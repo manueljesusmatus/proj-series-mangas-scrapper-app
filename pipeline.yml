@@ -1,0 +1,37 @@
+pipeline:
+  agent: any
+  tools:
+    maven: "M3"
+  stages:
+    - stage: Build
+      steps:
+        - script: "mvn clean package"
+
+    - stage: Test
+      steps:
+        - script: "mvn test"
+
+    - stage: Deploy
+      steps:
+        - sshPublisher:
+            publishers:
+              - sshPublisherDesc:
+                  configName: "Raspberry"
+                  transfers:
+                    - sshTransfer:
+                        sourceFiles: "target/*.jar"
+                        removePrefix: "target"
+                        remoteDirectory: "artifacts/series-yml"
+                    - sshTransfer:
+                        sourceFiles: "docker/*"
+                        removePrefix: "docker"
+                        remoteDirectory: "artifacts/series-yml"
+                        execCommand: |
+                          cd artifacts/series-yml/ &&
+                          date >> historial.txt &&
+                          docker build -t series-app-yml:${env.GIT_COMMIT.substring(0,7)} -t series-app-yml:latest .
+                  usePromotionTimestamp: false
+                  verbose: true
+  post:
+    always:
+      - script: "printenv | grep GIT"
