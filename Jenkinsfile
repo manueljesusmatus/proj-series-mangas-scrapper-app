@@ -38,7 +38,12 @@ pipeline {
                                     sourceFiles: 'docker/*',
                                     removePrefix: 'docker',
                                     remoteDirectory: 'artifacts/series',
-                                    execCommand: 'cd artifacts/series/ && date >> historial.txt && docker build -t series-app .'
+                                    execCommand: """
+                                        cd artifacts/series/ && \\
+                                        date >> historial.txt && \\
+                                        COMMIT_HASH=\$(git rev-parse --short HEAD) && \\
+                                        docker build -t series-app:\$COMMIT_HASH -t series-app:latest .
+                                    """
                                 )
                             ],
                             usePromotionTimestamp: false,
@@ -53,7 +58,7 @@ pipeline {
     post {
         always {
             script {
-                sh 'ls -lh'
+                echo '$GIT_COMMIT'
             }
         }
     }
