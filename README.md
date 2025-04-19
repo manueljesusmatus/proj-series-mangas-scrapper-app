@@ -15,6 +15,16 @@ Este proyecto es una API REST desarrollada en Spring Boot que permite descargar 
    ```bash
    java -jar target/serie-1.0.3.jar
    ```
+   
+## Docker
+1. Build
+   ```bash
+   docker build -t series-app .
+   ```
+2. Run
+   ```bash
+   docker run -d --name series-app -p 8085:8085 series-app
+   ```
 
 ## Uso
 - La API proporciona endpoints RESTful para descargar metadatos de mangas.
