@@ -27,7 +27,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'Raspberry',
+                            configName: 'Laplab',
                             transfers: [
                                 sshTransfer(
                                     sourceFiles: 'target/*.jar',
