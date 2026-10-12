@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOGPATH_LOCATION">$${env:LOG_FOLDER}</Property>
+        <Property name="LOGFILE_NAME">serie-app</Property>
+        <Property name="LOG_LEVEL">${spring:log.level}</Property>
+        <Property name="LOG_PATTERN_CONSOLE">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%pid}{MAGENTA} --- %style{${spring:spring.application.name}}{BRIGHT_YELLOW} [%15.15t] %style{%-40.40logger{1.}}{CYAN} : [%style{%X{trx}}{BRIGHT_BLUE}] %m%n%xEx</Property>
+        <Property name="LOG_PATTERN_FILE">%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %pid --- ${spring:spring.application.name} [%15.15t] %-40.40logger{1.} : [%X{trx}] %m%n%xEx</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false" pattern="${LOG_PATTERN_CONSOLE}"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${LOGPATH_LOCATION}/${LOGFILE_NAME}.log" filePattern="${LOGPATH_LOCATION}/${LOGFILE_NAME}.%d{yyyy-MM-dd}.%i.log">
+            <PatternLayout disableAnsi="false" pattern="${LOG_PATTERN_FILE}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="1 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="14"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+        <logger name="cl.dev.mjmh.serie" level="${LOG_LEVEL}" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </logger>
+        <logger name="org.hibernate.SQL" level="ERROR" additivity="false">
+            <AppenderRef ref="Console"/>
+        </logger>
+    </Loggers>
+</Configuration>

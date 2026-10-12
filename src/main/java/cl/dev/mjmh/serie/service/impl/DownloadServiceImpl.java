@@ -8,6 +8,7 @@ import cl.dev.mjmh.serie.service.DownloadService;
 import cl.dev.mjmh.serie.service.SerieService;
 import cl.dev.mjmh.serie.service.WebScrapingService;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,15 +30,18 @@ public class DownloadServiceImpl implements DownloadService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ConfigurationSearch configurationSearch;
+    private static final int MAX_NOMBRE_LENGTH = 150;
+
+    private final ConfigurationSearch config;
     private final WebScrapingService webScrapingService;
     private final SerieService serieService;
 
     public DownloadServiceImpl(
             ConfigurationSearch configurationSearch,
-            WebScrapingService webScrapingService, SerieService serieService
+            WebScrapingService webScrapingService,
+            SerieService serieService
     ) {
-        this.configurationSearch = configurationSearch;
+        this.config = configurationSearch;
         this.webScrapingService = webScrapingService;
         this.serieService = serieService;
     }
@@ -46,7 +50,7 @@ public class DownloadServiceImpl implements DownloadService {
     public List<SerieDto> downloadSeries() {
         try {
             LOGGER.info("descargando series ...");
-            List<HtmlElement> elements = webScrapingService.getContent(configurationSearch.getXpath());
+            List<HtmlElement> elements = webScrapingService.getContent(config.getXpath());
             if(Objects.isNull(elements) || elements.isEmpty()) {
                 throw new LoadResourceException("No se han encontrado series para descargar");
             }
@@ -69,12 +73,14 @@ public class DownloadServiceImpl implements DownloadService {
     }
 
     private SerieEntity toSerie(HtmlElement element) {
+        DomElement domE = element.getFirstElementChild();
+        String nombre = getElement(domE, config.getXpathTitle()).getTextContent();
         return SerieEntity.builder()
-                .id(Long.parseLong(getAttribute(element, configurationSearch.getIdAttr()).getValue()))
-                .nombre(getElement(element.getFirstElementChild(), configurationSearch.getXpathTitle()).getTextContent())
-                .tipo(getElement(element.getFirstElementChild(), configurationSearch.getXpathTipo()).getTextContent())
-                .imagen(extractURL(getElement(element.getFirstElementChild(), configurationSearch.getXpathImagen()).getTextContent()))
-                .url(getAttribute(element.getFirstElementChild(), configurationSearch.getUrlAttr()).getValue())
+                .id(Long.parseLong(getAttribute(element, config.getIdAttr()).getValue()))
+                .nombre(nombre.substring(0, Math.min(nombre.length(), MAX_NOMBRE_LENGTH)))
+                .tipo(getElement(domE, config.getXpathTipo()).getTextContent())
+                .imagen(extractURL(getElement(domE, config.getXpathImagen()).getTextContent()))
+                .url(getAttribute(domE, config.getUrlAttr()).getValue())
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .build();

@@ -1,11 +1,10 @@
 package cl.dev.mjmh.serie.client;
 
+import cl.dev.mjmh.serie.exception.LoadResourceException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import jakarta.annotation.PreDestroy;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -13,26 +12,31 @@ import java.io.IOException;
 @Component
 public class ScrapingClient {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private final WebClient webClient;
-
-    public ScrapingClient(WebClient webClient) {
-        this.webClient = webClient;
-    }
+    @Value("${webpage.debug.onFailingStatusCode}")
+    private boolean debugOnFailingStatusCode;
 
     public HtmlPage getPage(String url) throws IOException {
-        return webClient.getPage(url);
+        try (final WebClient webClient = new WebClient()) {
+            setOptions(webClient);
+            return webClient.getPage(url);
+        } catch (RuntimeException | IOException e) {
+            throw new LoadResourceException("Error al obtener page de URL: " + url, e);
+        }
     }
 
     public HtmlPage loadPageFromString(String htmlString) throws IOException {
-        return webClient.loadHtmlCodeIntoCurrentWindow(htmlString);
+        try (final WebClient webClient = new WebClient()) {
+            setOptions(webClient);
+            return webClient.loadHtmlCodeIntoCurrentWindow(htmlString);
+        } catch (RuntimeException | IOException e) {
+            throw new LoadResourceException("Error al cargar page de string: ", e);
+        }
     }
 
-    @PreDestroy
-    public void destroy() {
-        LOGGER.info("{} - Shutdown ...", webClient.getClass().getName());
-        webClient.close();
+    private void setOptions(WebClient webClient) {
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(debugOnFailingStatusCode);
     }
 
 }
